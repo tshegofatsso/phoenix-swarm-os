@@ -168,6 +168,18 @@ cd infra && docker-compose up
 - [Autonomy Model](./docs/autonomy_model.md) — mode behavior
 - [Security](./SECURITY.md) — hardening details
 
+### MGSN Phoenix-Swarm-OS Design & Support Package
+
+The MGSN-oriented documentation package preserves the attached dashboard source as a reference implementation and provides deployment, user-support, and design-review material. The individual files include the required copyright and intellectual-property notices.
+
+| Resource | Purpose |
+|---|---|
+| [Deployment README](./docs/mgsn/MGSN_Phoenix_Swarm_Deployment_README.md) | Deployment guidance and consolidated UI/UX critique. |
+| [PCL User Guide](./docs/mgsn/PCL_User_Guide.html) | Full Phoenix-Command Language syntax reference and operational how-tos. |
+| [UI/UX Critique](./docs/mgsn/UI_UX_Critique.md) | AI-generated assessment of hierarchy, visual system, PCL usability, and refinements. |
+| [Critique Script](./scripts/uiux_critique.py) | Reusable API-based critique script. |
+| [MGSN Dashboard Source Snapshot](./examples/MGSN_Phoenix_Swarm_Dashboard.tsx) | Source snapshot supplied for the design critique. |
+
 ## 📦 Future Work
 
 - [ ] PostgreSQL persistence layer

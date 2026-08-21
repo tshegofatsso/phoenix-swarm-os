@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Phoenix-Command Language user guide and operational how-tos for Phoenix-Swarm-OS.">
+  <title>PCL User Guide | Phoenix-Swarm-OS</title>
+  <style>
+    :root {
+      --mgsn-green: #4CAF50;
+      --mgsn-orange: #FF9000;
+      --mgsn-blue: #2196F3;
+      --mgsn-navy: #18365D;
+      --ink: #18365D;
+      --muted: #52677f;
+      --surface: #ffffff;
+      --canvas: #f4f8fc;
+      --line: #d7e2ee;
+      --code: #102844;
+      --code-ink: #eaf4ff;
+      --shadow: 0 12px 32px rgba(24, 54, 93, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 16px/1.65 Raleway, Lato, "Segoe UI", sans-serif;
+    }
+    h1, h2, h3, h4 { font-family: Montserrat, "Segoe UI", sans-serif; color: var(--mgsn-navy); line-height: 1.24; }
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin: 0; }
+    h2 { font-size: 1.65rem; margin: 3rem 0 1rem; padding-bottom: .55rem; border-bottom: 3px solid var(--mgsn-green); }
+    h3 { font-size: 1.15rem; margin: 2rem 0 .55rem; }
+    h4 { font-size: 1rem; margin-bottom: .4rem; }
+    a { color: #0b6fbf; text-underline-offset: .18em; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--mgsn-orange); outline-offset: 3px; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    code { padding: .12rem .35rem; color: #124d1a; background: #e9f7e9; border-radius: .25rem; }
+    pre { overflow-x: auto; padding: 1rem 1.15rem; color: var(--code-ink); background: var(--code); border: 1px solid #23486f; border-radius: .6rem; box-shadow: 0 5px 16px rgba(24, 54, 93, .14); }
+    pre code { padding: 0; color: inherit; background: transparent; }
+    ul, ol { padding-left: 1.35rem; }
+    li + li { margin-top: .4rem; }
+    .skip { position: absolute; top: -5rem; left: 1rem; padding: .5rem .75rem; color: #fff; background: var(--mgsn-navy); z-index: 10; }
+    .skip:focus { top: 1rem; }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+    .hero { color: #fff; background: linear-gradient(135deg, var(--mgsn-navy), #245481); }
+    .hero .shell { padding-top: 4.2rem; padding-bottom: 3rem; }
+    .eyebrow { display: inline-block; margin-bottom: .8rem; padding: .25rem .6rem; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; font: 700 .75rem/1 Montserrat, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+    .hero h1 { color: #fff; max-width: 900px; }
+    .hero p { max-width: 760px; font-size: 1.1rem; }
+    .notice { margin-top: 1.4rem; padding: .85rem 1rem; color: #132b47; background: #fff5df; border-left: 4px solid var(--mgsn-orange); border-radius: .25rem; }
+    .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 2rem; align-items: start; padding-top: 2rem; }
+    nav { position: sticky; top: 1rem; padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: .75rem; box-shadow: 0 5px 14px rgba(24,54,93,.06); }
+    nav strong { font-family: Montserrat, sans-serif; }
+    nav ol { margin: .7rem 0 0; padding-left: 1rem; font-size: .9rem; }
+    nav li + li { margin-top: .35rem; }
+    article { min-width: 0; padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: .85rem; box-shadow: var(--shadow); }
+    .callout { margin: 1.25rem 0; padding: 1rem 1.1rem; border-radius: .55rem; }
+    .callout.info { background: #eaf5ff; border-left: 4px solid var(--mgsn-blue); }
+    .callout.caution { background: #fff5df; border-left: 4px solid var(--mgsn-orange); }
+    .callout.success { background: #ebf8ec; border-left: 4px solid var(--mgsn-green); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .card { padding: 1rem; border: 1px solid var(--line); border-radius: .6rem; background: #fbfdff; }
+    table { width: 100%; margin: 1.2rem 0; border-collapse: collapse; font-size: .94rem; }
+    th, td { padding: .75rem; text-align: left; vertical-align: top; border: 1px solid var(--line); }
+    th { color: #fff; background: var(--mgsn-navy); font-family: Montserrat, sans-serif; }
+    tr:nth-child(even) td { background: #f7fbff; }
+    details { margin: .75rem 0; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: .5rem; }
+    summary { cursor: pointer; color: var(--mgsn-navy); font-weight: 700; }
+    .footer { margin-top: 3rem; padding: 1.5rem; color: #eef7ff; background: var(--mgsn-navy); border-radius: .7rem; font-size: .85rem; }
+    .footer strong { color: #fff; font-family: Montserrat, sans-serif; }
+    @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } nav { position: static; } .grid { grid-template-columns: 1fr; } }
+    @media print { body { background: #fff; } .hero { color: var(--ink); background: #fff; border-bottom: 3px solid var(--mgsn-green); } .hero h1 { color: var(--ink); } nav { display: none; } article { box-shadow: none; border: 0; } pre { white-space: pre-wrap; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#guide">Skip to guide content</a>
+  <header class="hero">
+    <div class="shell">
+      <span class="eyebrow">MGSN · FEWL · BBNC Partnership</span>
+      <h1>Phoenix-Command Language (PCL) User Guide</h1>
+      <p>This support document explains how the Phoenix-Swarm-OS dashboard represents workflow activity through PCL. It includes its implemented output format, common operating procedures, governance conventions, and practical troubleshooting.</p>
+      <div class="notice"><strong>Important:</strong> In the supplied application, PCL is a <strong>generated operational log format</strong>. It documents workflow actions; it is not presently an interactive shell, parser, or automation interface. Do not treat a displayed command as evidence that an external action has occurred without checking the corresponding task record.</div>
+    </div>
+  </header>
+
+  <main class="shell layout" id="guide">
+    <nav aria-label="Guide contents">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#purpose">Purpose and scope</a></li>
+        <li><a href="#concepts">Core concepts</a></li>
+        <li><a href="#syntax">Syntax and notation</a></li>
+        <li><a href="#commands">Command reference</a></li>
+        <li><a href="#howtos">Operational how-tos</a></li>
+        <li><a href="#standards">Governance standards</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#future">Future extensions</a></li>
+      </ol>
+    </nav>
+
+    <article>
+      <section id="purpose">
+        <h2>1. Purpose and scope</h2>
+        <p>The Phoenix-Command Language provides a compact, human-readable way to present workflow activity within the Phoenix-Swarm-OS convening console. A PCL line communicates a responsible agent, a work item or partnership context, an action, and—when relevant—a dependency or urgency marker.</p>
+        <div class="callout info"><strong>Where PCL comes from.</strong> The source defines <code>pclLine(step, task)</code> and <code>buildConveneSequence()</code>. The former selects a command style from workflow data; the latter orders the resulting lines into a convening sequence and appends a closing <code>commit</code> record.</div>
+      </section>
+
+      <section id="concepts">
+        <h2>2. Core concepts</h2>
+        <div class="grid">
+          <div class="card"><h3>Agents</h3><p>Agents are named workflow owners, introduced with <code>@</code>. Examples in the supplied source include <code>@THUSO</code> for strategy and orchestration, <code>@SIZWE</code> for backend and infrastructure, and <code>@NALEDI</code> for community engagement.</p></div>
+          <div class="card"><h3>Tasks</h3><p>Tasks are work units, introduced with <code>#</code>. Their identifiers are domain-based, for example <code>#G2</code> for governance and <code>#C3</code> for community delivery.</p></div>
+          <div class="card"><h3>Partnership contexts</h3><p>Partnership-wide actions are introduced with <code>$</code>, such as <code>$MGSN-FEWL-BBNC</code>. This makes the scope immediately visible in logs and governance records.</p></div>
+          <div class="card"><h3>Dependencies</h3><p>An upstream dependency is shown with <code>&lt;~</code>, indicating that a delegated task relies on a preceding task. Example: <code>delegate #C3 -&gt; @NALEDI &lt;~ #C1</code>.</p></div>
+        </div>
+      </section>
+
+      <section id="syntax">
+        <h2>3. Syntax and notation</h2>
+        <table>
+          <thead><tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><code>@</code></td><td>Named agent or workflow owner.</td><td><code>@THUSO</code></td></tr>
+            <tr><td><code>#</code></td><td>Task identifier.</td><td><code>#G1</code></td></tr>
+            <tr><td><code>$</code></td><td>Partnership or system context.</td><td><code>$MGSN-FEWL-BBNC</code></td></tr>
+            <tr><td><code>-&gt;</code></td><td>Delegation direction.</td><td><code>#G2 -&gt; @THUSO</code></td></tr>
+            <tr><td><code>&lt;~</code></td><td>Preceding dependency.</td><td><code>&lt;~ #G1</code></td></tr>
+            <tr><td><code>::</code></td><td>Separates the command target from a descriptive message.</td><td><code>status @SIZWE :: "…"</code></td></tr>
+            <tr><td><code>!critical</code></td><td>Optional urgency flag on a partnership-wide convening action.</td><td><code>convene … !critical</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="commands">
+        <h2>4. Implemented command reference</h2>
+        <h3><code>delegate</code> — assign a task</h3>
+        <p>Use this format to show that a named task has been delegated to its primary responsible agent. The optional dependency clause makes an upstream prerequisite explicit.</p>
+        <pre><code>delegate #&lt;TASK_ID&gt; -&gt; @&lt;AGENT_NAME&gt; [ &lt;~ #&lt;DEPENDENCY_ID&gt; ]
+
+# Examples
+delegate #G2 -&gt; @THUSO
+delegate #C3 -&gt; @NALEDI &lt;~ #C1</code></pre>
+
+        <h3><code>convene</code> — record a partnership-wide convening action</h3>
+        <p>Use this format for actions directed to the full partnership or an all-agent audience. The dashboard uses <code>!critical</code> when the action warrants special operational attention.</p>
+        <pre><code>convene $&lt;PARTNERSHIP&gt; :: "&lt;ACTION_DESCRIPTION&gt;" [ !critical ]
+
+# Example
+convene $MGSN-FEWL-BBNC :: "Activate meeting cadence — monthly check-in (O1)" !critical</code></pre>
+
+        <h3><code>status</code> — describe an agent-specific operational update</h3>
+        <p>Use this format when the log needs to attribute a narrative update to an individual agent without assigning a new task ID.</p>
+        <pre><code>status @&lt;AGENT_NAME&gt; :: "&lt;STATUS_UPDATE&gt;"
+
+# Example
+status @SIZWE :: "Deploy data collection tools in field (I2)"</code></pre>
+
+        <h3><code>commit</code> — close a completed convening sequence</h3>
+        <p>Use this format as the final record in a prepared convening sequence. It captures a concise, auditable summary of the sequence completed.</p>
+        <pre><code>commit $&lt;PARTNERSHIP&gt; :: "&lt;SUMMARY_MESSAGE&gt;"
+
+# Example
+commit $MGSN-FEWL-BBNC :: "23 tasks delegated across 8 agents, 4 phases"</code></pre>
+      </section>
+
+      <section id="howtos">
+        <h2>5. Operational how-tos</h2>
+        <h3>How to read a planned workflow sequence</h3>
+        <ol>
+          <li>Identify the phase heading in the dashboard, such as Planning, Execution, Reporting, or Governance.</li>
+          <li>Read the command verb first: <code>delegate</code> denotes task assignment, <code>convene</code> denotes a partnership-wide activity, and <code>status</code> denotes a narrative update.</li>
+          <li>For a delegation, read the task ID, assigned agent, and any <code>&lt;~</code> dependency from left to right.</li>
+          <li>Confirm execution in the underlying task or governance record. A PCL line is an operational log representation, not an independent proof of completion.</li>
+        </ol>
+
+        <h3>How to trace a dependency before beginning work</h3>
+        <ol>
+          <li>Locate the task’s PCL line and check for <code>&lt;~ #TASK</code>.</li>
+          <li>Open the referenced task in the Task Registry and review its outputs and current status.</li>
+          <li>Only progress the dependent work once its prerequisite output has been validated by the relevant owner.</li>
+          <li>Record a new status update or governance note through the application’s approved recordkeeping process; do not rely on a manually copied console line alone.</li>
+        </ol>
+
+        <h3>How to flag a governance-critical action</h3>
+        <ol>
+          <li>Confirm that the matter is partnership-wide and requires elevated attention, such as a formal committee convening or a time-sensitive compliance action.</li>
+          <li>Use the <code>convene</code> structure with the correct partnership context and a clear action description.</li>
+          <li>Apply <code>!critical</code> only when the workflow should visibly mark the action as urgent.</li>
+          <li>For approvals, retain the separate voting record, notice, quorum evidence, resolution, and action register required by the governing policy.</li>
+        </ol>
+
+        <h3>How to close a convening sequence</h3>
+        <ol>
+          <li>Review the generated steps for correct phase order, assignees, and dependencies.</li>
+          <li>Confirm that every material action has an owner and that open risks are recorded outside the console in the appropriate register.</li>
+          <li>Use a final <code>commit</code> summary that is factual, concise, and does not claim completion of actions that remain pending.</li>
+          <li>Archive the sequence together with the related task, meeting, and governance records under your applicable document-control practice.</li>
+        </ol>
+      </section>
+
+      <section id="standards">
+        <h2>6. Governance and documentation standards</h2>
+        <div class="callout caution"><strong>Do not overstate status.</strong> PCL language should distinguish between delegation, acknowledgement, and verified completion. A task remains subject to the evidence and approval requirements defined by the relevant MGSN, FEWL, BBNC, committee, or legal process.</div>
+        <table>
+          <thead><tr><th>Practice</th><th>Recommended convention</th></tr></thead>
+          <tbody>
+            <tr><td>Clarity</td><td>Use meaningful action text that identifies the activity, intended outcome, and relevant task reference.</td></tr>
+            <tr><td>Ownership</td><td>Use the registered agent identifier and retain the named primary and backup owners in the task record.</td></tr>
+            <tr><td>Dependencies</td><td>State the direct prerequisite task only; complex dependency chains belong in the formal task register or project plan.</td></tr>
+            <tr><td>Audit trail</td><td>Pair PCL output with the underlying action register, meeting minutes, approvals, evidence, and version-controlled documents.</td></tr>
+            <tr><td>Confidentiality</td><td>Do not include personal data, credentials, confidential financial information, or unapproved legal conclusions in PCL descriptions.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>7. Troubleshooting</h2>
+        <details><summary>The wrong agent is shown after a <code>delegate</code> line</summary><p>Check the task’s <code>primary</code> assignment in the task data, then verify that the workflow phase and destination agent match. In the current source, <code>pclLine</code> chooses the task by phase and primary agent; ambiguous mappings should be reviewed in the task registry.</p></details>
+        <details><summary>A dependency is absent even though the task has prerequisites</summary><p>The current helper shows only the first dependency, using <code>task.deps[0]</code>. Consult the full task record for all dependencies. A future revision may render multiple dependencies in a structured command object.</p></details>
+        <details><summary>A line says <code>commit</code>, but work is still open</summary><p>Interpret the line as the close of a generated convening sequence—not as automatic verification that work is complete. Check the individual task records, approvals, and evidence before reporting completion.</p></details>
+        <details><summary>A PCL command cannot be typed back into the app</summary><p>This is expected in the supplied implementation. The dashboard renders PCL strings for visibility; it has no interactive parser or execution engine. See the future extensions section for a safe evolution path.</p></details>
+      </section>
+
+      <section id="future">
+        <h2>8. Recommended future extensions</h2>
+        <p>The following are proposed enhancements, not features of the supplied source. They should be implemented only after suitable authorization, testing, access controls, and audit requirements are defined.</p>
+        <ul>
+          <li>Represent commands as structured objects, for example <code>{ type: "delegate", taskId: "G2", assignee: "THUSO" }</code>, then render the PCL string from that object.</li>
+          <li>Add a validation layer that returns clear success, warning, or error states before recording an action.</li>
+          <li>Link command effects to task state, agent load, and an immutable audit record.</li>
+          <li>Add controlled export, search, filtering, and copy functions for authorized users.</li>
+          <li>Implement a role-based approval step before any PCL command can alter workflow data.</li>
+        </ul>
+        <div class="callout success"><strong>Design principle:</strong> retain PCL’s concise, readable syntax while keeping approval, execution, and evidence controls explicit and separate.</div>
+      </section>
+
+      <footer class="footer">
+        <strong>AUTHORSHIP, INTELLECTUAL PROPERTY &amp; NOTICE</strong><br><br>
+        | © Copyright 2026 • prepared by Tshegofatso Sepeng • All Rights Reserved |<br><br>
+        Author / Creator / IP Owner: T. Sepeng<br>
+        Social: @tshegofatsso<br>
+        Email: tshegofatso@duck.com<br>
+        Copyright © 2026 — All Rights Reserved<br><br>
+        This document and its contents constitute original intellectual property. No part may be copied, reproduced, distributed, adapted, extracted, scraped, or repurposed — in whole or in part — without the express written consent of the IP Owner.<br><br>
+        This notice applies to all readers, including but not limited to institutions, consultants, researchers, funders, automated systems, non-qualified data harvesters, and so-called “privacy-agnostic” actors. Unauthorised use, duplication, or digital interception may constitute a violation of applicable intellectual property, privacy, and data protection laws.
+      </footer>
+    </article>
+  </main>
+</body>
+</html>
